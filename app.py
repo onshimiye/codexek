@@ -3,6 +3,8 @@ import streamlit.components.v1 as components
 import numpy as np
 import pandas as pd
 
+dataset = None
+
 
 # Classes
 
@@ -60,7 +62,6 @@ def new_section(name):
 
 # Initializations
 
-dataset = None
 
 default_datasets = [
     # Dataset('Credit Card Fraud Detection', 'creditcard.csv',"https://www.kaggle.com/mlg-ulb/creditcardfraud",  "The datasets contains transactions made by credit cards in September 2013 by european cardholders. This dataset presents transactions that occurred in two days, where we have 492 frauds out of 284,807 transactions. The dataset is highly unbalanced, the positive class (frauds) account for 0.172% of all transactions. It contains only numerical input variables which are the result of a PCA transformation. Unfortunately, due to confidentiality issues, we cannot provide the original features and more background information about the data. Features V1, V2, … V28 are the principal components obtained with PCA, the only features which have not been transformed with PCA are 'Time' and 'Amount'. Feature 'Time' contains the seconds elapsed between each transaction and the first transaction in the dataset. The feature 'Amount' is the transaction Amount, this feature can be used for example-dependant cost-senstive learning. Feature 'Class' is the response variable and it takes value 1 in case of fraud and 0 otherwise."),
@@ -74,20 +75,24 @@ sections = ["Introduction", "Datasets", "Data Analysis", "Feature Engineering", 
 
 
 # UI
+
+# Page setup
+
 st.set_page_config(
     page_title="CodExek: Data Analysis and Machine Learning Tutorials Platform",
     page_icon="assets/logo.svg",
     layout='wide',
-    initial_sidebar_state="collapsed"
+    # initial_sidebar_state="collapsed"
     )
+
 
 # Sidebar Navigation
 
 st.sidebar.image('assets/logo_flat.svg')
 
-st.sidebar.title("Jump to different sections:")
+st.sidebar.title("Section:")
 for each in sections:
-    st.sidebar.markdown(f"<a href='#{''.join(each.split())}_section'>{each} </a>", unsafe_allow_html=True)
+    st.sidebar.markdown(f"<a href='#{''.join(each.split())}_section' style='text-decoration:none; font-style: normal; font-weight: 500; font-size: 18px; color: #012C3D;'>{each} </a>", unsafe_allow_html=True)
 
 
 
@@ -150,7 +155,20 @@ st.write('They are different visualization techniques and they all depend on wha
 st.write('Below are some of the visualizations available and what kind of data input they can work with')
 
 
-st.selectbox('Select any of the visualizations you would like to make',['Box-and-whisker', 'Histograms', 'Bar Chart', 'Pie Chart', 'Scatter Plot', 'Time Series'])
+
+
+
+# graph = st.selectbox('Select any of the visualizations you would like to make',['Box-and-whisker', 'Histograms', 'Bar Chart', 'Pie Chart', 'Scatter Plot', 'Time Series'])
+# if graph == 'Box-and-whisker':
+#     pass
+# elif graph == 'Histograms':
+#     pass
+# elif graph == 'Bar Chart':
+#     pass
+# elif graph == 'Scatter Plot':
+#     pass
+# else:
+#     st.write('Selected Visualization is not yet supported')
 
 
 # Feature Engineering
@@ -165,3 +183,4 @@ new_section('Train Model')
 
 # Predictions
 new_section('Predictions')
+
