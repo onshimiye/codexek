@@ -1,0 +1,284 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+body nav {
+  background: #FFFFFF;
+  -webkit-box-shadow: 0px 10px 40px rgba(89, 120, 150, 0.06);
+          box-shadow: 0px 10px 40px rgba(89, 120, 150, 0.06);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+body nav .left {
+  width: 15%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+body nav .center {
+  width: 70%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+body nav .center .search-box {
+  border-left: 1px solid #F4F4F4;
+  border-right: 1px solid #F4F4F4;
+  height: 100%;
+  width: 80%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding-left: 10px;
+}
+
+body nav .center .search-box .search-logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+}
+
+body nav .center .search-box .search-input {
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+}
+
+body nav .center .search-box .search-input input {
+  height: 25px;
+  width: 80%;
+  border: none;
+}
+
+body nav .center .search-box .search-input input:focus {
+  border: none;
+  outline: none;
+}
+
+body nav .center .search-box .search-input input::-webkit-input-placeholder {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 15px;
+  color: #CECECE;
+}
+
+body nav .center .search-box .search-input input:-ms-input-placeholder {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 15px;
+  color: #CECECE;
+}
+
+body nav .center .search-box .search-input input::-ms-input-placeholder {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 15px;
+  color: #CECECE;
+}
+
+body nav .center .search-box .search-input input::placeholder {
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 15px;
+  color: #CECECE;
+}
+
+body nav .right {
+  width: 15%;
+}
+
+body nav .right .actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+body nav .right .actions .action {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  gap: 10px;
+}
+
+body nav .right .actions .action .icon {
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  margin: auto 10px;
+}
+
+body section {
+  margin: 2% auto;
+}
+
+body .welcome-message {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+body .welcome-message h1 {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 48px;
+  /* identical to box height */
+  text-align: center;
+  color: #1C1C1C;
+}
+
+body .welcome-message p {
+  text-align: justify;
+  font-style: normal;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 160%;
+  /* or 26px */
+  text-align: center;
+  color: #343434;
+}
+
+body .overview .cards {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+body .overview .cards .card {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 25%;
+          flex: 1 0 25%;
+  width: 25%;
+  height: 376px;
+  -webkit-box-shadow: 0px 4px 12px rgba(215, 215, 215, 0.25);
+          box-shadow: 0px 4px 12px rgba(215, 215, 215, 0.25);
+  background: #E7E7E7;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin: 2%;
+}
+
+body .overview .cards .card .icon {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  margin: 0 auto;
+}
+
+body .overview .cards .card h2 {
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 157.2%;
+  text-align: center;
+  color: #012C3D;
+}
+
+body .overview .cards .card p {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 160%;
+  text-align: center;
+  color: #343434;
+}
+
+body .deep-dive {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+body .deep-dive h1 {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 42px;
+  line-height: 42px;
+  color: #0275B1;
+  text-align: center;
+}
+/*# sourceMappingURL=main.css.map */
