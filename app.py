@@ -127,6 +127,15 @@ def categorical_columns(dataset):
 
     return res 
 
+def int_columns():
+    res = []
+    for each in dataset.columns.values.tolist():
+        if 'numpy.float' in str(column_type(dataset, column)) or  'numpy.int' in str(column_type(dataset, column)):
+            res.append(each)
+
+    return res 
+
+
 def model_type(df, target):
     if len(df[target].unique().tolist()) > 5:
         return 'linear'
@@ -328,7 +337,8 @@ if st.button('Suffle Dataset'):
 # test_size /= 100
 # print(test_size)
 label = dataset[target]
-df = dataset.drop([target], axis=1)
+df = dataset[[int_columns(dataset)], axis=1]
+# df = dataset.drop([target], axis=1)
 # x_train, x_test, y_train, y_test = train_test_split(df, label, test_size=0.2, stratify=target)
 
 # if st.button('Train set'):
