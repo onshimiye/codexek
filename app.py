@@ -337,7 +337,7 @@ if st.button('Suffle Dataset'):
 # test_size /= 100
 # print(test_size)
 label = dataset[target]
-df = dataset[[int_columns(dataset)], axis=1]
+# df = dataset[[int_columns(dataset)], axis=1]
 # df = dataset.drop([target], axis=1)
 # x_train, x_test, y_train, y_test = train_test_split(df, label, test_size=0.2, stratify=target)
 
