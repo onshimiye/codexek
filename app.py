@@ -423,11 +423,11 @@ if mt == 'linear':
     st.write('Possible tunings. Check the documentation for more details: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html')
     st.write()
 
-    fi = st.text_input('fit_intercept', 'True')
-    nr = st.text_input('normalize', 'False')
-    # nj = st.number_input('n_jobs', 1, min_value=-1, max_value=1)
+    fi = st.selectbox('fit_intercept', [True, False])
+    nr = st.selectbox('normalize', [True, False])
+    nj = st.number_input('n_jobs', -1,1, 1)
 
-    clf = LinearRegression(fit_intercept=fi, normalize=nr, n_jobs=None)
+    clf = LinearRegression(fit_intercept=fi, normalize=nr, n_jobs=nj)
     clf.fit(x_train, y_train)
     st.info('Model fit successfully')
     st.write(clf)
@@ -435,13 +435,17 @@ if mt == 'linear':
 elif mt == 'logistic':
     st.write('The recommended model for this dataset is Logistic Regression')
     st.write('Possible tunings. Check the documentation for more details: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html')
-    p = st.text_input('penalty', 'l2')
-    fi = st.number_input('fit_intercept', 0, 1, 0)
-    # mi = st.number_input('max_iter', 0,  max_value=1000.0)
+    p = st.selectbox('penalty', ['l1', 'l2', 'elasticnet', 'none'])
+    fi = st.selectbox('fit_intercept', [True, False])
+    dual = st.selectbox('dual', [True, False])
+    c = st.number_input('C', 0, 100, 1)
+    i_s = st.number_input('intercept_scaling', 0, 100, 1)
     rs = st.number_input('random_state', 0, 1, 0)
+    mi = st.number_input('max iter', 0, 1000000, 100)
+
     st.write(len(x_train), len(y_train))
     
-    clf = LogisticRegression(random_state=rs, penalty=p, fit_intercept=fi, max_iter=0)
+    clf = LogisticRegression(dual=dual, C=c, intercept_scaling=i_s, random_state=rs, penalty=p, fit_intercept=fi, max_iter=0)
     clf.fit(x_train, y_train)
     st.info('Model fit successfully')
     st.write(clf)
@@ -456,7 +460,8 @@ st.write("Mean absolute error =", round(sm.mean_absolute_error(y_test, y_test_pr
 st.write("Root mean squared error =", round(sm.mean_squared_error(y_test, y_test_pred), 2)) 
 st.write("Median absolute error =", round(sm.median_absolute_error(y_test, y_test_pred), 2)) 
 st.write("Explain variance score =", round(sm.explained_variance_score(y_test, y_test_pred), 2)) 
-st.write("Accuracy Score =", round(sm.accuracy_score(y_test, y_test_pred), 2))
+if mt == 'logistic':
+    st.write("Accuracy Score =", round(sm.accuracy_score(y_test, y_test_pred), 2))
 st.write("R2 score =", round(sm.r2_score(y_test, y_test_pred), 2))
 
 
@@ -464,34 +469,35 @@ st.write("R2 score =", round(sm.r2_score(y_test, y_test_pred), 2))
 st.markdown("### Model Optimisation")
 st.write('You can go back to the model fitting to tune the parameters for a better accuracy')
 
+if mt == 'linear':
+    fig, ax = plt.subplots()
+    ax.scatter(y_test, y_test_pred, edgecolors=(0, 0, 0))
+    ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
+    ax.set_xlabel('Measured')
+    ax.set_ylabel('Predicted')
+    plt.show()
+    st.pyplot()
 
-fig, ax = plt.subplots()
-ax.scatter(y_test, y_test_pred, edgecolors=(0, 0, 0))
-ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
-ax.set_xlabel('Measured')
-ax.set_ylabel('Predicted')
-plt.show()
-st.pyplot()
-
-alphas = np.logspace(-2, 0, 20)
-sgd_logit = SGDClassifier(loss='log', n_jobs=-1, random_state=17)
-logit_pipe = Pipeline([('scaler', StandardScaler()), ('poly', PolynomialFeatures(degree=2)), 
-                       ('sgd_logit', sgd_logit)])
-val_train, val_test = validation_curve(logit_pipe, x, label,
-                                       'sgd_logit__alpha', alphas, cv=5,
+    alphas = np.logspace(-2, 0, 20)
+    sgd_logit = SGDClassifier(loss='log', n_jobs=-1, random_state=17)
+    logit_pipe = Pipeline([('scaler', StandardScaler()), ('poly', PolynomialFeatures(degree=2)), 
+                        ('sgd_logit', sgd_logit)])
+    val_train, val_test = validation_curve(logit_pipe, x, label,
+                                        'sgd_logit__alpha', alphas, cv=5,
                                         scoring='roc_auc')
 
-def plot_with_err(x, data, **kwargs):
-    mu, std = data.mean(1), data.std(1)
-    lines = plt.plot(x, mu, '-', **kwargs)
-    plt.fill_between(x, mu - std, mu + std, edgecolor='none',
-                     facecolor=lines[0].get_color(), alpha=0.2)
+if mt == 'logistic':
+    def plot_with_err(x, data, **kwargs):
+        mu, std = data.mean(1), data.std(1)
+        lines = plt.plot(x, mu, '-', **kwargs)
+        plt.fill_between(x, mu - std, mu + std, edgecolor='none',
+                        facecolor=lines[0].get_color(), alpha=0.2)
 
-plot_with_err(alphas, val_train, label='training scores')
-plot_with_err(alphas, val_test, label='validation scores')
-plt.xlabel(r'$\alpha$'); plt.ylabel('ROC AUC')
-plt.legend()
-st.pyplot()
+    plot_with_err(alphas, val_train, label='training scores')
+    plot_with_err(alphas, val_test, label='validation scores')
+    plt.xlabel(r'$\alpha$'); plt.ylabel('ROC AUC')
+    plt.legend()
+    st.pyplot()
 
 
 
