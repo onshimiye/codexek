@@ -3,3 +3,4 @@ venv/
 __pycache__/
 .vscode/
 assets/__pycache__/
+coin.py

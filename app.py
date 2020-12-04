@@ -26,7 +26,15 @@ class Dataset:
     def __str__(self):
         return self.name
 
+class CorrelationColumn:
+    def __init__(self, index, name, value):
+        self.index = index
+        self.name = name
+        self.value = value
 
+    def __str__(self):
+        return '{} (corr: {})'.format(self.name, self.value)
+    
 # Functions
 
 def load_dataset(name):
@@ -107,12 +115,13 @@ def correlation_graph(dataset, columns=None):
     sns.heatmap(cor, annot=True, cmap=plt.cm.Blues)
     plt.show()
     st.pyplot()
+    return cor
 
 def label_encode(dataset, columns):
     label_encoder = LabelEncoder()
     for each in columns:
         dataset[each] = label_encoder.fit_transform(dataset[each].astype('str'))
-    st.info('Data encoded. Click below to see the new stats')
+    st.info('Data encoded. Below are the new stats')
     understand_dataset(dataset)
     
 
@@ -127,12 +136,19 @@ def categorical_columns(dataset):
 
     return res 
 
-def int_columns():
+def numerical_columns(dataset):
     res = []
     for each in dataset.columns.values.tolist():
-        if 'numpy.float' in str(column_type(dataset, column)) or  'numpy.int' in str(column_type(dataset, column)):
+        if 'numpy.float' in str(column_type(dataset, each)) or  'numpy.int' in str(column_type(dataset, each)):
             res.append(each)
 
+    return res 
+
+def has_nulls(dataset):
+    res = []
+    for each in dataset.columns.values.tolist():
+        if dataset[each].isnull():
+            res.append(each)
     return res 
 
 
@@ -169,7 +185,7 @@ default_datasets = [
 
 sections = ["Introduction", "Datasets", "Data Analysis", "Feature Engineering", "Train Model", "Predictions"]
 
-sst = SessionState.get(dataset=None)
+sst = SessionState.get(dataset=None, df=None)
 
 # UI
 
@@ -277,30 +293,9 @@ elif graph is 'Pie Chart':
 
 
 
-
-
-
-
-
 # Feature Engineering
 new_section('Feature Engineering')
 st.write('This section is still under construction')
-
-st.markdown("### Correlation identifications")
-st.write('Choose how you would like to display correlational matrix below')
-
-
-option = st.radio('Want to load specific columns?', ['Yes', 'No'])
-if option == 'No':
-    correlation_graph(dataset)
-
-else:
-    corr_columns = st.multiselect('Which columns you would like to show in correlational matrix?', dataset.columns.values.tolist())
-    if len(corr_columns) == 0:
-        st.stop() 
-    correlation_graph(dataset, columns=corr_columns)
-
-# relevant features extraction
 
 
 # Categorical data conversion
@@ -308,6 +303,53 @@ st.markdown("### Categorical data encoding")
 cat_columns = categorical_columns(dataset)
 corr_columns = st.multiselect('Which columns you would like to encode to numerical values?', cat_columns)
 label_encode(dataset, corr_columns)
+
+
+
+st.markdown("### Correlation identifications")
+st.write('Choose how you would like to display correlational matrix below')
+
+
+option = st.radio('Want to load specific columns?', ['Yes', 'No'])
+if option == 'No':
+    cor = correlation_graph(dataset)
+
+else:
+    # corr_columns = []
+    corr_columns = st.multiselect('Which columns you would like to show in correlational matrix?', dataset.columns.values.tolist())
+    if len(corr_columns) == 0:
+        st.stop() 
+    cor = correlation_graph(dataset, columns=corr_columns)
+
+
+# relevant features extraction
+
+st.markdown("### Relevant features extraction")
+
+target = st.selectbox('Please select the target column or the column to predict', dataset.columns.values.tolist())
+
+st.write('Below are all columns numerical columns and their correlation to the target column. Please pick those that you believe have a significant correlation value.')
+correlation_values = cor[target].reset_index(name='values')
+
+corr_classes = []
+
+for each in correlation_values.itertuples():
+    if each.index == target:
+        continue
+    corr_classes.append(CorrelationColumn(each.Index, each.index, round(each.values, 2)))
+
+selected_columns = st.multiselect('Select columns by their correlation to the target', list(corr_classes))
+
+
+# st.write(list(set().union(numerical_columns(dataset), corr_columns)))
+
+other_numerical_columns = st.multiselect('Select other numerical columns you would like to train with', list(set().union(numerical_columns(dataset), corr_columns)))
+
+
+df = dataset[list(set().union([x.name for x in selected_columns], other_numerical_columns, [target]))]
+df = df.dropna()
+sst.df = df
+
 
 
 # Data normalization and scaling
@@ -318,9 +360,9 @@ label_encode(dataset, corr_columns)
 # Train Model
 new_section('Train Model')
 dataset = sst.dataset
+df = sst.df
 
 
-target = st.selectbox('Please select the target column or the column to predict', dataset.columns.values.tolist())
 
 # identify which model to use 
 
@@ -331,32 +373,46 @@ if st.button('Suffle Dataset'):
     shuffle_dataset(dataset)
 
 
+
+
 # Data Splitting 
 
-# test_size = st.number_input('How big do you want your test dataset to be', 0, 50, 20)
-# test_size /= 100
-# print(test_size)
-label = dataset[target]
-# df = dataset[[int_columns(dataset)], axis=1]
-# df = dataset.drop([target], axis=1)
-# x_train, x_test, y_train, y_test = train_test_split(df, label, test_size=0.2, stratify=target)
+test_size = st.number_input('How big do you want your test dataset to be', 0, 50, 20)
+test_size /= 100
+print(test_size)
 
-# if st.button('Train set'):
-#     understand_dataset(x_train)
-# if st.button('Test set'):
-#     understand_dataset(x_test)
+st.write(df)
+label = df[target]
+st.write(label)
+
+
+x = df.drop([target], axis=1)
+st.write(x)
+
+x_train, x_test, y_train, y_test = train_test_split(x, label, test_size=test_size)
+
+# st.write(x_train)
+# st.write(x_test)
+
+if st.button('Train set'):
+    understand_dataset(x_train)
+if st.button('Test set'):
+    understand_dataset(x_test)
 
 # https://stackoverflow.com/a/13623707/13988391
 
 
 
 
+
 # Model fitting
 
+st.markdown("### Model Fitting")
 mt = model_type(dataset, target)
 if mt == 'linear':
     st.write('The recommended model for this dataset is Liniear Regression')
-    st.write('Possible Tunings')
+    st.write('Possible tunings. Check the documentation for more details: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html')
+    st.write()
 
     fi = st.text_input('fit_intercept', 'True')
     nr = st.text_input('normalize', 'False')
@@ -365,19 +421,24 @@ if mt == 'linear':
     clf = LinearRegression(fit_intercept=fi, normalize=nr, n_jobs=None)
     clf.fit(df, label)
     st.info('Model fit successfully')
+    st.write(clf)
 
 elif mt == 'logistic':
     st.write('The recommended model for this dataset is Logistic Regression')
-    st.write('Possible tunings')
+    st.write('Possible tunings. Check the documentation for more details: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html')
     p = st.text_input('penalty', 'l2')
-    fi = st.text_input('fit_intercept', 'True')
+    fi = st.number_input('fit_intercept', 0, 1, 0)
     # mi = st.number_input('max_iter', 0,  max_value=1000.0)
-    rs = st.text_input('random_state', 'True')
+    rs = st.number_input('random_state', 0, 1, 0)
     
     clf = LogisticRegression(random_state=rs, penalty=p, fit_intercept=fi, max_iter=0)
     clf.fit(df, label)
     st.info('Model fit successfully')
+    st.write(clf)
     
+
+
+st.markdown("### Model Evaluation")
 
 
 
