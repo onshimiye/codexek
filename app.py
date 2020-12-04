@@ -13,6 +13,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import LogisticRegression
 
+from sklearn.model_selection import learning_curve
+import sklearn.metrics as sm
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression, LogisticRegressionCV, SGDClassifier
+from sklearn.model_selection import validation_curve
+
+
 
 # Classes
 
@@ -419,7 +428,7 @@ if mt == 'linear':
     # nj = st.number_input('n_jobs', 1, min_value=-1, max_value=1)
 
     clf = LinearRegression(fit_intercept=fi, normalize=nr, n_jobs=None)
-    clf.fit(df, label)
+    clf.fit(x_train, y_train)
     st.info('Model fit successfully')
     st.write(clf)
 
@@ -430,15 +439,61 @@ elif mt == 'logistic':
     fi = st.number_input('fit_intercept', 0, 1, 0)
     # mi = st.number_input('max_iter', 0,  max_value=1000.0)
     rs = st.number_input('random_state', 0, 1, 0)
+    st.write(len(x_train), len(y_train))
     
     clf = LogisticRegression(random_state=rs, penalty=p, fit_intercept=fi, max_iter=0)
-    clf.fit(df, label)
+    clf.fit(x_train, y_train)
     st.info('Model fit successfully')
     st.write(clf)
     
 
 
 st.markdown("### Model Evaluation")
+y_test_pred = clf.predict(x_test)
+
+
+st.write("Mean absolute error =", round(sm.mean_absolute_error(y_test, y_test_pred), 2)) 
+st.write("Root mean squared error =", round(sm.mean_squared_error(y_test, y_test_pred), 2)) 
+st.write("Median absolute error =", round(sm.median_absolute_error(y_test, y_test_pred), 2)) 
+st.write("Explain variance score =", round(sm.explained_variance_score(y_test, y_test_pred), 2)) 
+st.write("Accuracy Score =", round(sm.accuracy_score(y_test, y_test_pred), 2))
+st.write("R2 score =", round(sm.r2_score(y_test, y_test_pred), 2))
+
+
+
+st.markdown("### Model Optimisation")
+st.write('You can go back to the model fitting to tune the parameters for a better accuracy')
+
+
+fig, ax = plt.subplots()
+ax.scatter(y_test, y_test_pred, edgecolors=(0, 0, 0))
+ax.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=4)
+ax.set_xlabel('Measured')
+ax.set_ylabel('Predicted')
+plt.show()
+st.pyplot()
+
+alphas = np.logspace(-2, 0, 20)
+sgd_logit = SGDClassifier(loss='log', n_jobs=-1, random_state=17)
+logit_pipe = Pipeline([('scaler', StandardScaler()), ('poly', PolynomialFeatures(degree=2)), 
+                       ('sgd_logit', sgd_logit)])
+val_train, val_test = validation_curve(logit_pipe, x, label,
+                                       'sgd_logit__alpha', alphas, cv=5,
+                                        scoring='roc_auc')
+
+def plot_with_err(x, data, **kwargs):
+    mu, std = data.mean(1), data.std(1)
+    lines = plt.plot(x, mu, '-', **kwargs)
+    plt.fill_between(x, mu - std, mu + std, edgecolor='none',
+                     facecolor=lines[0].get_color(), alpha=0.2)
+
+plot_with_err(alphas, val_train, label='training scores')
+plot_with_err(alphas, val_test, label='validation scores')
+plt.xlabel(r'$\alpha$'); plt.ylabel('ROC AUC')
+plt.legend()
+st.pyplot()
+
+
 
 
 
