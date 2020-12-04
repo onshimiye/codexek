@@ -439,6 +439,7 @@ elif mt == 'logistic':
     fi = st.selectbox('fit_intercept', [True, False])
     dual = st.selectbox('dual', [True, False])
     c = st.number_input('C', 0, 100, 1)
+    
     i_s = st.number_input('intercept_scaling', 0, 100, 1)
     rs = st.number_input('random_state', 0, 1, 0)
     mi = st.number_input('max iter', 0, 1000000, 100)
@@ -478,13 +479,13 @@ if mt == 'linear':
     plt.show()
     st.pyplot()
 
-    alphas = np.logspace(-2, 0, 20)
-    sgd_logit = SGDClassifier(loss='log', n_jobs=-1, random_state=17)
-    logit_pipe = Pipeline([('scaler', StandardScaler()), ('poly', PolynomialFeatures(degree=2)), 
-                        ('sgd_logit', sgd_logit)])
-    val_train, val_test = validation_curve(logit_pipe, x, label,
-                                        'sgd_logit__alpha', alphas, cv=5,
-                                        scoring='roc_auc')
+alphas = np.logspace(-2, 0, 20)
+sgd_logit = SGDClassifier(loss='log', n_jobs=-1, random_state=17)
+logit_pipe = Pipeline([('scaler', StandardScaler()), ('poly', PolynomialFeatures(degree=2)), 
+                    ('sgd_logit', sgd_logit)])
+val_train, val_test = validation_curve(logit_pipe, x, label,
+                                    'sgd_logit__alpha', alphas, cv=5,
+                                    scoring='roc_auc')
 
 if mt == 'logistic':
     def plot_with_err(x, data, **kwargs):
