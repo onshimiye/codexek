@@ -21,6 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV, SGDClassifier
 from sklearn.model_selection import validation_curve
 
+from modules.deep_learning import deep_learning
 
 
 # Classes
@@ -237,7 +238,7 @@ new_section('Datasets')
 # st.header("Datasets")
 st.write("You can chose within our available datasets, or upload you own datasets")
 
-dataset_option = st.selectbox('What datasets would you like to continue with',['Default Datasets', 'Custom Datasets'])
+dataset_option = st.selectbox('What datasets would you like to continue with',['Default Datasets', 'Custom Datasets', 'Deep Learning'])
 
 if (dataset_option == 'Default Datasets'):
     for each in default_datasets:
@@ -254,6 +255,13 @@ elif (dataset_option == 'Custom Datasets'):
 
     if uploaded_file is not None:
         sst.dataset = pd.read_csv(uploaded_file)
+
+elif (dataset_option == 'Deep Learning'):
+    st.write("This shows you how to use deep learning models. It uses a classic example of spam detection model. Enjoy")
+
+    deep_learning()
+    st.stop()
+
 
    
 
@@ -289,13 +297,13 @@ graph = st.selectbox('Suggested graphs', suggest_graphs(dataset, rec))
 if graph is None:
     st.stop()
 
-if graph is 'Box-and-whisker':
+if graph == 'Box-and-whisker':
     plot_boxandwhisker(dataset, rec)
 
-elif graph is 'Histograms':
+elif graph == 'Histograms':
     plot_histograms(dataset, rec)
 
-elif graph is 'Pie Chart':
+elif graph == 'Pie Chart':
     plot_piechart(dataset, rec)
 
 
@@ -517,6 +525,28 @@ dataset = sst.dataset
 
 # Predictions
 
+arr_to_predict = []
+for each in df.columns:
+    if each == target: continue
+    inpt = st.number_input(each)
+    arr_to_predict.append(inpt)
 
+arr_to_predict = np.array([arr_to_predict]).astype(np.float64).round()
+
+st.write(clf.predict(arr_to_predict))
+
+import pickle
+import base64
+
+# x = {"my": "data"}
+
+def download_model(model):
+    output_model = pickle.dumps(model)
+    b64 = base64.b64encode(output_model).decode()
+    href = f'<a href="data:file/output_model;base64,{b64}" download="model.pkl">Download Trained Model .pkl File</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+
+download_model(model=clf)
 
 # exporting model
