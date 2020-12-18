@@ -380,7 +380,8 @@ new_section('Train Model')
 dataset = sst.dataset
 df = sst.df
 
-
+if len(df.columns) <= 1:
+    st.stop()
 
 # identify which model to use 
 
