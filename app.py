@@ -21,7 +21,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV, SGDClassifier
 from sklearn.model_selection import validation_curve
 
-from modules.deep_learning import deep_learning
+# from modules.deep_learning import deep_learning
 
 
 # Classes
