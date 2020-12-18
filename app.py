@@ -257,9 +257,10 @@ elif (dataset_option == 'Custom Datasets'):
         sst.dataset = pd.read_csv(uploaded_file)
 
 elif (dataset_option == 'Deep Learning'):
-    st.write("This shows you how to use deep learning models. It uses a classic example of spam detection model. Enjoy")
+    st.write('Deep learning is not supported at the moment. It will be supported soon')
+    # st.write("This shows you how to use deep learning models. It uses a classic example of spam detection model. Enjoy")
 
-    deep_learning()
+    # deep_learning()
     st.stop()
 
 
